@@ -4,6 +4,7 @@ plugins {
     id("com.google.gms.google-services")
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -65,6 +66,7 @@ dependencies {
 
     //hilt
     implementation(libs.hilt.android)
+    implementation(libs.firebase.crashlytics)
     kapt(libs.hilt.compiler)
 
     //viewmodel
@@ -82,6 +84,9 @@ dependencies {
 
     //gson
     implementation(libs.gson)
+
+    //workmanager
+    implementation(libs.androidx.work.runtime.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

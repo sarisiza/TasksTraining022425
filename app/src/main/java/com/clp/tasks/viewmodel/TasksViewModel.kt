@@ -7,10 +7,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.clp.tasks.data.login.LoginRepository
 import com.clp.tasks.data.notifications.MessagingRepository
 import com.clp.tasks.data.room.Task
 import com.clp.tasks.data.room.TasksRepository
+import com.clp.tasks.notifications.NotificationsWorker
 import com.clp.tasks.utils.UiState
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -18,6 +23,11 @@ import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 private const val TAG = "TasksViewModel"
@@ -73,12 +83,25 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    fun insertTask(task: Task){
+    fun insertTask(task: Task, context: Context){
         viewModelScope.launch(coroutineDispatcher) {
             tasksRepository.insertTask(task).collect{
                 _insertTask.postValue(it)
             }
         }
+        val inputData = Data
+            .Builder()
+            .putString(NotificationsWorker.TITLE,task.title)
+            .putString(NotificationsWorker.DESCRIPTION,task.description)
+            .putString(NotificationsWorker.DUE_DATE,task.dueDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+            .build()
+        val delay = task.dueDate.atTime(10,0).toEpochSecond(ZoneOffset.UTC) - LocalDateTime.now().toEpochSecond(
+            ZoneOffset.UTC)
+        val notificationsWorker = OneTimeWorkRequestBuilder<NotificationsWorker>()
+            .setInputData(inputData)
+            //.setInitialDelay(delay,TimeUnit.SECONDS)
+            .build()
+        WorkManager.getInstance(context).enqueueUniqueWork(task.id,ExistingWorkPolicy.REPLACE,notificationsWorker)
     }
 
     fun deleteTask(task: Task){

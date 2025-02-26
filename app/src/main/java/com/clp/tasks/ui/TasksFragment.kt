@@ -37,7 +37,7 @@ class TasksFragment : BaseFragment() {
         TasksAdapter(
             onCompleteTask = { task ->
                 task.completed = true
-                viewModel.insertTask(task)
+                viewModel.insertTask(task,requireContext().applicationContext)
             },
             onDeleteTask = {task ->
                 viewModel.deleteTask(task)

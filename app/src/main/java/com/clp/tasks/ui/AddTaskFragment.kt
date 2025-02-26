@@ -30,7 +30,7 @@ class AddTaskFragment : BaseFragment() {
         binding.addTaskBtn.setOnClickListener {
             val task = verifyValues()
             if(task != null){
-                viewModel.insertTask(task)
+                viewModel.insertTask(task,requireContext().applicationContext)
             } else {
                 Toast.makeText(requireContext(),"Verify your information",Toast.LENGTH_LONG).show()
             }
