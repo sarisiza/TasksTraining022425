@@ -13,8 +13,6 @@ import com.clp.tasks.data.room.TasksRepository
 import com.clp.tasks.data.room.TasksRepositoryImpl
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -58,7 +56,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesAuth(): FirebaseAuth = Firebase.auth
+    fun providesAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Provides
     fun providesLogin(
