@@ -30,7 +30,7 @@
     <EditText
         android:id="@+id/title_et"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="20dp"
         app:layout_constraintStart_toEndOf="@id/title_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/title_label"
