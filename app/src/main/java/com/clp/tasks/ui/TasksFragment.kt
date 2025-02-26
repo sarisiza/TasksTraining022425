@@ -1,5 +1,8 @@
 package com.clp.tasks.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.clp.tasks.R
@@ -20,6 +25,14 @@ class TasksFragment : BaseFragment() {
         FragmentTasksBinding.inflate(layoutInflater)
     }
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){ granted ->
+        if (!granted){
+            Toast.makeText(requireContext(),"Permission n ot granted",Toast.LENGTH_LONG).show()
+        }
+    }
+
     private val tasksAdapter by lazy {
         TasksAdapter(
             onCompleteTask = { task ->
@@ -30,6 +43,11 @@ class TasksFragment : BaseFragment() {
                 viewModel.deleteTask(task)
             }
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        handlePermissions()
     }
 
     override fun onCreateView(
@@ -121,6 +139,17 @@ class TasksFragment : BaseFragment() {
                 }
                 is UiState.SUCCESS -> {
                     findNavController().navigate(R.id.action_tasks_to_login)
+                }
+            }
+        }
+    }
+
+    private fun handlePermissions(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissions = arrayListOf(Manifest.permission.POST_NOTIFICATIONS)
+            permissions.forEach {
+                if (checkSelfPermission(requireContext(),it) != PackageManager.PERMISSION_GRANTED){
+                    requestPermissionLauncher.launch(it)
                 }
             }
         }
