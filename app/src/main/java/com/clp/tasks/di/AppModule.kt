@@ -7,12 +7,15 @@ import androidx.room.Room
 import com.clp.tasks.OAUTH_ID
 import com.clp.tasks.data.login.LoginRepository
 import com.clp.tasks.data.login.LoginRepositoryImpl
+import com.clp.tasks.data.notifications.MessagingRepository
+import com.clp.tasks.data.notifications.MessagingRepositoryImpl
 import com.clp.tasks.data.room.TasksDao
 import com.clp.tasks.data.room.TasksDatabase
 import com.clp.tasks.data.room.TasksRepository
 import com.clp.tasks.data.room.TasksRepositoryImpl
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
@@ -59,6 +62,10 @@ class AppModule {
     fun providesAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
     @Provides
+    @Singleton
+    fun providesMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
+
+    @Provides
     fun providesLogin(
         auth: FirebaseAuth,
         credentialRequest: GetCredentialRequest,
@@ -90,5 +97,11 @@ class AppModule {
     fun providesTasksRepository(
         dao: TasksDao
     ): TasksRepository = TasksRepositoryImpl(dao)
+
+    @Provides
+    @Singleton
+    fun providesMessagingRepository(
+        firebaseMessaging: FirebaseMessaging
+    ): MessagingRepository = MessagingRepositoryImpl(firebaseMessaging)
 
 }

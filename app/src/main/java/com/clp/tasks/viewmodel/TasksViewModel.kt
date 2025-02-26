@@ -1,12 +1,14 @@
 package com.clp.tasks.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.credentials.Credential
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.clp.tasks.data.login.LoginRepository
+import com.clp.tasks.data.notifications.MessagingRepository
 import com.clp.tasks.data.room.Task
 import com.clp.tasks.data.room.TasksRepository
 import com.clp.tasks.utils.UiState
@@ -18,10 +20,12 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "TasksViewModel"
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val tasksRepository: TasksRepository,
+    private val messagingRepository: MessagingRepository,
     private val coroutineDispatcher: CoroutineDispatcher
 ): ViewModel() {
 
@@ -40,6 +44,10 @@ class TasksViewModel @Inject constructor(
 
     private val _deleteTask: MutableLiveData<UiState<Unit>> = MutableLiveData(UiState.LOADING)
     val deleteTask: LiveData<UiState<Unit>> get() = _deleteTask
+
+    init {
+        retrieveUserToken()
+    }
 
     fun authenticate(context: Context){
         viewModelScope.launch(coroutineDispatcher) {
@@ -77,6 +85,22 @@ class TasksViewModel @Inject constructor(
         viewModelScope.launch(coroutineDispatcher) {
             tasksRepository.deleteTask(task).collect{
                 _deleteTask.postValue(it)
+            }
+        }
+    }
+
+    private fun retrieveUserToken(){
+        viewModelScope.launch(coroutineDispatcher) {
+            messagingRepository.getToken().collect{
+                when (it){
+                    is UiState.ERROR -> {
+                        Log.e(TAG, "error retrieving token: ${it.error.localizedMessage}", it.error)
+                    }
+                    UiState.LOADING -> {}
+                    is UiState.SUCCESS -> {
+                        Log.d(TAG, "retrieveUserToken: ${it.message}")
+                    }
+                }
             }
         }
     }
