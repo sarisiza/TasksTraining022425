@@ -45,5 +45,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="8dp"/>
 
+    <TextView
+        android:id="@+id/random_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/random_btn"
+        android:text="Random"/>
+
+    <Button
+        android:id="@+id/random_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Random"
+        app:layout_constraintBottom_toTopOf="@id/add_task"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

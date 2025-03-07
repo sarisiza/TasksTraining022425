@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.clp.tasks.R
 import com.clp.tasks.databinding.FragmentTasksBinding
 import com.clp.tasks.utils.UiState
+import kotlin.random.Random
 
 private const val TAG = "TasksFragment"
 class TasksFragment : BaseFragment() {
@@ -71,6 +72,10 @@ class TasksFragment : BaseFragment() {
 
         binding.addTask.setOnClickListener {
             findNavController().navigate(R.id.action_tasks_to_add_task)
+        }
+
+        binding.randomBtn.setOnClickListener {
+            binding.randomText.text = Random.nextInt().toString()
         }
 
         updateTasks()
