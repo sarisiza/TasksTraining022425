@@ -73,10 +73,6 @@ class TasksFragment : BaseFragment() {
             findNavController().navigate(R.id.action_tasks_to_add_task)
         }
 
-        binding.testCrash.setOnClickListener {
-            throw RuntimeException("Test crash")
-        }
-
         updateTasks()
         viewModel.getTasks()
         handleLogOut()

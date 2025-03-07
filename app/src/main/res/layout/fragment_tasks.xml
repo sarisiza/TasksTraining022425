@@ -42,15 +42,8 @@
         android:layout_height="wrap_content"
         android:text="@string/log_out"
         android:backgroundTint="@color/red"
-        app:layout_constraintBottom_toTopOf="@id/test_crash"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="8dp"/>
 
-    <Button
-        android:id="@+id/test_crash"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/test_crash"
-        android:backgroundTint="@color/red"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
